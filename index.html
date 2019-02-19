@@ -1,0 +1,52 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title></title>
+  <meta name="description" content="">
+  <meta name="author" content="Tamas Piros">
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(registration => {
+            console.log(`Service Worker registered! Scope: ${registration.scope}`);
+          })
+          .catch(err => {
+            console.log(`Service Worker registration failed: ${err}`);
+          });
+      });
+    }
+    
+    const getConnection = () => {
+      return navigator.connection || navigator.mozConnection ||
+        navigator.webkitConnection || navigator.msConnection;
+    }
+
+    const info = getConnection();
+
+    const updateNetworkInfo = () => {
+      document.getElementById('networkType').innerHTML = info.type;
+      document.getElementById('effectiveNetworkType').innerHTML = info.effectiveType;
+      document.getElementById('downlink').innerHTML = info.downlink;
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (info) {
+        info.addEventListener('change', updateNetworkInfo);
+        updateNetworkInfo();
+      }
+    })
+  </script>
+</head>
+
+<body>
+  <h1>Adaptive image serving</h1>
+  <p>This example shows how to adaptively serve lower quality images for devices with slower bandwidth (network connection).</p>
+  <p>Current theoretical network type is <b id="networkType">not available</b>.</p>
+  <p>Current effective network type is <b id="effectiveNetworkType">not available</b>.</p>
+  <p>Current downlink speed is <b id="downlink">not available</b>.</p>
+  <img src="https://media.awarasleep.com/awara/foundation_with_legs_image_1_v3.jpg?auto=webp">
+</body>
+</html>
